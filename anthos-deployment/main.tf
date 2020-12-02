@@ -19,10 +19,10 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = var.node_name
   location   = var.location
   cluster    = google_container_cluster.primary.name
-  node_count = 4
+  node_count = var.node_count
 
   node_config {
-    preemptible  = true
+    preemptible  = var.preemptible
     machine_type = var.machine_type
 
     oauth_scopes = [
@@ -58,7 +58,7 @@ module "acm" {
   location         = var.location
   cluster_endpoint = google_container_cluster.primary.endpoint
 
-  sync_repo   = "git@github.com:abelgana/csp-config-management.git"
-  sync_branch = "1.0.0"
-  policy_dir  = "foo-corp"
+  sync_repo   = var.sync_repo
+  sync_branch = var.sync_branch
+  policy_dir  = var.policy_dir
 }

@@ -7,7 +7,7 @@ data "google_client_config" "default" {
 }
 data "google_service_account_access_token" "sa" {
   provider               = google.tokengen
-  target_service_account = "terraform@apt-rope-287612.iam.gserviceaccount.com"
+  target_service_account = var.terraform_service_account
   lifetime               = "600s"
   scopes = [
     "https://www.googleapis.com/auth/cloud-platform",

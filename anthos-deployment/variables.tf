@@ -20,10 +20,36 @@ variable "machine_type" {
 
 variable "default_project" {
   type    = string
-  default = "apt-rope-287612"
 }
 
 variable "release_channel" {
   type    = string
   default = "STABLE"
+}
+
+variable "node_count" {
+  type    = number
+  default = 4
+}
+
+variable "preemptible" {
+  type    = bool
+  default = false
+}
+
+variable "sync_repo" {
+  type    = string
+}
+
+variable "sync_branch" {
+  type    = string
+}
+
+variable "policy_dir" {
+  type    = string
+}
+
+variable "terraform_service_account" {
+  type    = string
+  default = "terraform@apt-rope-287612.iam.gserviceaccount.com"
 }
