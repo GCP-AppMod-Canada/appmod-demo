@@ -53,3 +53,13 @@ variable "terraform_service_account" {
   type    = string
   default = "terraform@apt-rope-287612.iam.gserviceaccount.com"
 }
+
+variable "policy_controller" {
+  type    = bool
+  default = false
+}
+
+variable "install_template_library" {
+  type    = bool
+  default = false
+}
