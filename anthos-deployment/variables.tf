@@ -15,7 +15,7 @@ variable "node_name" {
 
 variable "machine_type" {
   type    = string
-  default = "e2-standard-4"
+  default = "e2-standard-16"
 }
 
 variable "default_project" {
@@ -29,7 +29,7 @@ variable "release_channel" {
 
 variable "node_count" {
   type    = number
-  default = 4
+  default = 1
 }
 
 variable "preemptible" {

@@ -3,31 +3,54 @@ resource "google_container_cluster" "primary" {
 
   name                     = var.primary_name
   location                 = var.location
-  remove_default_node_pool = true
-  initial_node_count       = 1
 
   release_channel {
     channel = var.release_channel
   }
 
+  addons_config {
+    http_load_balancing {
+      disabled = false
+    }
+
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
+
+    cloudrun_config {
+      disabled = false
+
+    }
+  }
+
+  node_pool {
+    name       = var.node_name
+    node_count = var.node_count
+
+    node_config {
+      preemptible  = var.preemptible
+      machine_type = var.machine_type
+
+      oauth_scopes = [
+        "https://www.googleapis.com/auth/logging.write",
+        "https://www.googleapis.com/auth/monitoring",
+      ]
+    }
+
+    autoscaling {
+      min_node_count = 1
+      max_node_count = var.node_count * 2
+    }
+  }
+
+  workload_identity_config {
+    identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
+  }
   depends_on = [google_project_service.container]
-}
 
-resource "google_container_node_pool" "primary_preemptible_nodes" {
-  provider = google-beta
-
-  name       = var.node_name
-  location   = var.location
-  cluster    = google_container_cluster.primary.name
-  node_count = var.node_count
-
-  node_config {
-    preemptible  = var.preemptible
-    machine_type = var.machine_type
-
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
+    lifecycle {
+    ignore_changes = [
+      resource_labels
     ]
   }
 }
@@ -39,6 +62,8 @@ module "hub" {
   cluster_name     = var.primary_name
   location         = var.location
   cluster_endpoint = google_container_cluster.primary.endpoint
+  gke_hub_sa_name  = format("%s-%s","gke-hub-sa",var.default_project)
+  gke_hub_membership_name  = format("%s-%s","gke-hub-membership",var.default_project)
 }
 
 module "asm" {
@@ -48,6 +73,7 @@ module "asm" {
   cluster_name     = var.primary_name
   location         = var.location
   cluster_endpoint = google_container_cluster.primary.endpoint
+  asm_version      = "1.6.8-asm.9"
 }
 
 module "acm" {
@@ -62,4 +88,8 @@ module "acm" {
   sync_repo   = var.sync_repo
   sync_branch = var.sync_branch
   policy_dir  = var.policy_dir
+}
+
+resource "null_resource" "wait" {
+  depends_on = [module.acm.wait, module.asm.asm_wait, module.hub.wait]
 }

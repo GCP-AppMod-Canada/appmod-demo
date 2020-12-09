@@ -31,3 +31,7 @@ provider "google-beta" {
   // access_token = data.google_service_account_access_token.sa.access_token
   project = var.default_project
 }
+
+
+data "google_project" "project" {
+}
