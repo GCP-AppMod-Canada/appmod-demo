@@ -63,3 +63,18 @@ variable "install_template_library" {
   type    = bool
   default = false
 }
+
+variable "asm_version" {
+  type = string
+  default = "1.6.8-asm.9"
+}
+
+variable "node_version" {
+  type = string
+  default = "1.16.15-gke.4300"
+}
+
+variable "min_master_version" {
+  type = string
+  default = "1.16.15-gke.4300"
+}

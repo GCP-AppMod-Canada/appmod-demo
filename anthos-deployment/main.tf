@@ -41,11 +41,14 @@ resource "google_container_cluster" "primary" {
       min_node_count = 1
       max_node_count = var.node_count * 2
     }
+    version = var.node_version
   }
+  min_master_version = var.min_master_version
 
   workload_identity_config {
     identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
   }
+
   depends_on = [google_project_service.container]
 
     lifecycle {
@@ -73,7 +76,7 @@ module "asm" {
   cluster_name     = var.primary_name
   location         = var.location
   cluster_endpoint = google_container_cluster.primary.endpoint
-  asm_version      = "1.6.8-asm.9"
+  asm_version      = var.asm_version
 }
 
 module "acm" {
