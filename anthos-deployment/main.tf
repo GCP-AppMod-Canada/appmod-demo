@@ -88,9 +88,12 @@ module "acm" {
   cluster_endpoint = google_container_cluster.primary.endpoint
   enable_policy_controller = var.policy_controller
   install_template_library = var.install_template_library
+
   sync_repo   = var.sync_repo
   sync_branch = var.sync_branch
   policy_dir  = var.policy_dir
+  create_ssh_key = false
+  ssh_auth_key   = file("./acm_ssh_auth_key/id_rsa")
 }
 
 resource "null_resource" "wait" {
